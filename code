@@ -1,0 +1,68 @@
+#include <iostream>
+#include <vector>
+
+class User {
+public:
+    User(const std::string& username, const std::string& password, const std::string& name)
+        : username(username), password(password), name(name) {}
+
+    const std::string& getUsername() const { return username; }
+    const std::string& getName() const { return name; }
+    const std::string& getPassword() const { return password; }
+
+private:
+    std::string username;
+    std::string password;
+    std::string name;
+};
+
+class Chat {
+public:
+    void registerUser(const std::string& username, const std::string& password, const std::string& name) {
+        users.push_back(User(username, password, name));
+        std::cout << "Пользователь " << username << " зарегистрирован.\n";
+    }
+
+    User* login(const std::string& username, const std::string& password) {
+        for (auto& user : users) {
+            if (user.getUsername() == username && user.getPassword() == password) {
+                std::cout << "Пользователь " << username << " вошел в чат.\n";
+                return &user;
+            }
+        }
+        std::cout << "Неверные логин или пароль.\n";
+        return nullptr;
+    }
+
+    void sendMessage(const User& sender, const std::string& recipient, const std::string& message) {
+        std::cout << sender.getName() << " отправил сообщение для " << recipient << ": " << message << "\n";
+    }
+
+    void broadcastMessage(const User& sender, const std::string& message) {
+        std::cout << sender.getName() << " отправил групповое сообщение: " << message << "\n";
+    }
+
+private:
+    std::vector<User> users;
+};
+
+int main() {
+    setlocale(LC_ALL, "RU");
+    Chat chat;
+
+    chat.registerUser("user1", "password1", "User One");
+    chat.registerUser("user2", "password2", "User Two");
+
+    User* currentUser = chat.login("user1", "password1");
+
+    if (currentUser) {
+        chat.sendMessage(*currentUser, "user2", "Привет, как дела?");
+        chat.broadcastMessage(*currentUser, "Это групповое сообщение!");
+
+        // Здесь можно добавить дополнительный функционал для работы с чатом
+
+        return 0;
+    }
+
+    return 1;
+}
